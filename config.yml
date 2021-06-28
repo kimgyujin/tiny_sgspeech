@@ -47,16 +47,6 @@ model_config:
 
 learning_config:
   train_dataset_config:
-    use_tf: True
-    augmentation_config:
-      after:
-        time_masking:
-          num_masks: 10
-          mask_factor: 100
-          p_upperbound: 0.05
-        freq_masking:
-          num_masks: 1
-          mask_factor: 27
     data_paths:
       - /content/LibriSpeech/train-clean-100/transcripts.tsv
     shuffle: True
@@ -66,7 +56,6 @@ learning_config:
     stage: train
 
   eval_dataset_config:
-    use_tf: True
     data_paths:
       - /content/LibriSpeech/dev-clean/transcripts.tsv
     shuffle: False
@@ -76,7 +65,6 @@ learning_config:
     stage: eval
 
   test_dataset_config:
-    use_tf: True
     data_paths:
       - /content/LibriSpeech/test-clean/transcripts.tsv
     shuffle: False
