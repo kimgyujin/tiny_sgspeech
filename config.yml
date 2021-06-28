@@ -17,7 +17,7 @@ decoder_config:
   beam_width: 5
   norm_score: True
   corpus_files:
-    - /home/ubuntu/LibriSpeech_tfasr/train-960/transcripts.tsv
+    - /content/LibriSpeech/train-clean-100/transcripts.tsv
 
 model_config:
   name: conformer
@@ -60,7 +60,7 @@ learning_config:
           num_masks: 1
           mask_factor: 27
     data_paths:
-      - /home/ubuntu/LibriSpeech_tfasr/train-960/transcripts.tsv
+      - /content/LibriSpeech/train-clean-100/transcripts.tsv
     shuffle: True
     cache: True
     buffer_size: 100
@@ -70,7 +70,7 @@ learning_config:
   eval_dataset_config:
     use_tf: True
     data_paths:
-      - /home/ubuntu/LibriSpeech_tfasr/dev-clean/transcripts.tsv
+      - /content/LibriSpeech/dev-clean/transcripts.tsv
     shuffle: False
     cache: True
     buffer_size: 100
@@ -80,7 +80,7 @@ learning_config:
   test_dataset_config:
     use_tf: True
     data_paths:
-      - /home/ubuntu/LibriSpeech_tfasr/test-clean/transcripts.tsv
+      - /content/LibriSpeech/test-clean/transcripts.tsv
     shuffle: False
     cache: True
     buffer_size: 100
@@ -97,18 +97,18 @@ learning_config:
     batch_size: 16
     accumulation_steps: 4
     num_epochs: 100
-    outdir: /home/ubuntu/conformer
+    outdir: /content/conformer
     log_interval_steps: 300
     eval_interval_steps: 50000
     save_interval_steps: 100000
     checkpoint:
-      filepath: /home/ubuntu/conformer/checkpoints/{epoch:02d}.h5
+      filepath: /content/conformer/checkpoints/{epoch:02d}.h5
       save_best_only: True
       save_weights_only: False
       save_freq: epoch
-    states_dir: /home/ubuntu/conformer/states
+    states_dir: /content/conformer/states
     tensorboard:
-      log_dir: /home/ubuntu/conformer/tensorboard
+      log_dir: /content/conformer/tensorboard
       histogram_freq: 1
       write_graph: True
       write_images: True
