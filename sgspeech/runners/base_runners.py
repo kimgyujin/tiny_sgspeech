@@ -423,7 +423,7 @@ class BaseTester(BaseRunner):
         groundtruth = bytes_to_string(groundtruth)
         greedy = bytes_to_string(greedy)
 
-        tf.print("Label:"+str(groundtruth))
+        tf.print("\nLabel:"+str(groundtruth))
         tf.print("Prediction:"+str(greedy))
         with open(self.output_file_path, "a", encoding="utf-8") as out:
             for i, path in enumerate(file_path):
