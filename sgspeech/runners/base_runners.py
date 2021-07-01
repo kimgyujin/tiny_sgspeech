@@ -328,10 +328,6 @@ class BaseTester(BaseRunner):
 
         self.output_file_path = os.path.join(self.config.outdir, f"{output_name}.tsv")
         self.test_metrics = {
-            "beam_wer": ErrorRate(func=wer, name="test_beam_wer", dtype=tf.float32),
-            "beam_cer": ErrorRate(func=cer, name="test_beam_cer", dtype=tf.float32),
-            "beam_lm_wer": ErrorRate(func=wer, name="test_beam_lm_wer", dtype=tf.float32),
-            "beam_lm_cer": ErrorRate(func=cer, name="test_beam_lm_cer", dtype=tf.float32),
             "greed_wer": ErrorRate(func=wer, name="test_greed_wer", dtype=tf.float32),
             "greed_cer": ErrorRate(func=cer, name="test_greed_cer", dtype=tf.float32)
         }
@@ -339,7 +335,7 @@ class BaseTester(BaseRunner):
     def set_output_file(self, batch_size: int = 1):
         if not batch_size: batch_size = self.config.batch_size
         with open(self.output_file_path, "w") as out:
-            out.write("PATH\tGROUNDTRUTH\tGREEDY\tBEAMSEARCH\tBEAMSEARCHLM\n")
+            out.write("PATH\tGROUNDTRUTH\n")
 
 
     def set_test_data_loader(self, test_dataset, batch_size = None):
@@ -386,7 +382,6 @@ class BaseTester(BaseRunner):
     @tf.function
     def _test_function(self, iterator):
         batch = next(iterator)
-        #tf.print("what?")
         return self._test_step(batch)
 
     @tf.function(experimental_relax_shapes=True)
@@ -396,13 +391,8 @@ class BaseTester(BaseRunner):
         labels = self.model.text_featurizer.iextract(labels)
         input_length = get_reduced_length(input_length, self.model.time_reduction_factor)
         greed_pred = self.model.recognize(features, input_length)
-        beam_pred = None
 
-        if self.model.text_featurizer.decoder_config.beam_width > 0:
-            beam_pred = self.model.recognize_beam(features, input_length, lm=False)
-
-
-        return file_paths, labels, greed_pred, beam_pred
+        return file_paths, labels, greed_pred
 
     def _finish(self):
         tf.print("\n> Calculating evaluation metrics ...")
@@ -412,41 +402,32 @@ class BaseTester(BaseRunner):
 
         for line in lines:
             line = line.split("\t")
-            labels, greed_pred, beam_pred= line[1], line[2], line[3]
+            labels, greed_pred = line[1], line[2]
             labels = tf.convert_to_tensor([labels], dtype=tf.string)
             greed_pred = tf.convert_to_tensor([greed_pred], dtype=tf.string)
-            beam_pred = tf.convert_to_tensor([beam_pred], dtype=tf.string)
 
             self.test_metrics["greed_wer"].update_state(greed_pred, labels)
             self.test_metrics["greed_cer"].update_state(greed_pred, labels)
-            self.test_metrics["beam_wer"].update_state(beam_pred, labels)
-            self.test_metrics["beam_cer"].update_state(beam_pred, labels)
 
 
         tf.print("Test results:")
         tf.print("G_WER = ", self.test_metrics["greed_wer"].result())
         tf.print("G_CER = ", self.test_metrics["greed_cer"].result())
-        tf.print("B_WER = ", self.test_metrics["beam_wer"].result())
-        tf.print("B_CER = ", self.test_metrics["beam_cer"].result())
-
 
     def _append_to_file(self,
                         file_path: np.ndarray,
                         groundtruth: np.ndarray,
                         greedy: np.ndarray,
-                        beamsearch: np.ndarray,
                         ):
         file_path = bytes_to_string(file_path)
         groundtruth = bytes_to_string(groundtruth)
         greedy = bytes_to_string(greedy)
 
-        tf.print("Label!!!!!"+str(groundtruth))
-        tf.print("Greed!!!!!"+str(greedy))
-        beamsearch = bytes_to_string(beamsearch) if beamsearch is not None else ["" for _ in file_path]
-        #beamsearch_lm = bytes_to_string(beamsearch_lm) if beamsearch_lm is not None else ["" for _ in file_path]
+        tf.print("Label:"+str(groundtruth))
+        tf.print("Prediction:"+str(greedy))
         with open(self.output_file_path, "a", encoding="utf-8") as out:
             for i, path in enumerate(file_path):
-                line = f"{groundtruth[i]}\t{greedy[i]}\t{beamsearch[i]}"
+                line = f"{groundtruth[i]}\t{greedy[i]}"
                 out.write(f"{path.strip()}\t{line}\n")
 
 
