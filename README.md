@@ -7,6 +7,9 @@
 ### Reference
 
 [Tensorflow](https://www.tensorflow.org/)
+
 [TensorflowASR](https://github.com/TensorSpeech/TensorFlowASR)
+
 [Librosa](https://librosa.org/doc/latest/index.html)
+
 [Conformer paper](https://arxiv.org/abs/2005.08100)
