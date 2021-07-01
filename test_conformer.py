@@ -48,7 +48,7 @@ setup_devices([args.device], cpu=args.cpu)
 from sgspeech.configs.config import Config
 from sgspeech.datasets.speech_dataset import SpeechSliceDataset
 from sgspeech.featurizers.speech_featurizer import NumpySpeechFeaturizer
-from sgspeech.featurizers.text_featurizer import CharFeaturizer, PhoneFeaturizer
+from sgspeech.featurizers.text_featurizer import CharFeaturizer
 from sgspeech.runners.base_runners import BaseTester
 from sgspeech.models.conformer import Conformer
 

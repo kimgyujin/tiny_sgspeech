@@ -435,7 +435,7 @@ class BaseTester(BaseRunner):
                         groundtruth: np.ndarray,
                         greedy: np.ndarray,
                         beamsearch: np.ndarray,
-                        beamsearch_lm: np.ndarray):
+                        ):
         file_path = bytes_to_string(file_path)
         groundtruth = bytes_to_string(groundtruth)
         greedy = bytes_to_string(greedy)
@@ -443,10 +443,10 @@ class BaseTester(BaseRunner):
         tf.print("Label!!!!!"+str(groundtruth))
         tf.print("Greed!!!!!"+str(greedy))
         beamsearch = bytes_to_string(beamsearch) if beamsearch is not None else ["" for _ in file_path]
-        beamsearch_lm = bytes_to_string(beamsearch_lm) if beamsearch_lm is not None else ["" for _ in file_path]
+        #beamsearch_lm = bytes_to_string(beamsearch_lm) if beamsearch_lm is not None else ["" for _ in file_path]
         with open(self.output_file_path, "a", encoding="utf-8") as out:
             for i, path in enumerate(file_path):
-                line = f"{groundtruth[i]}\t{greedy[i]}\t{beamsearch[i]}\t{beamsearch_lm[i]}"
+                line = f"{groundtruth[i]}\t{greedy[i]}\t{beamsearch[i]}"
                 out.write(f"{path.strip()}\t{line}\n")
 
 
